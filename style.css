@@ -86,3 +86,14 @@
     border-radius: 14%;
     cursor: pointer;
 }
+
+.green {
+    padding: 3px;
+    border-radius: 3px;
+    color: #fff;
+    background-color: #15da35;
+}
+
+.red {
+    background-color: #F36747;
+}
