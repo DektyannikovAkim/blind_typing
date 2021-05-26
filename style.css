@@ -11,6 +11,7 @@
 
 .header-border {
     border-bottom: solid 1px #ececec;
+    margin-bottom: 20px;
 }
 
 .header-medium {
@@ -28,10 +29,16 @@
     color: #222222;
 }
 
+.wrapper-for-param-text {
+    font-size: 22px;
+}
+
 .training-field {
     display: flex;
     padding: 20px;
     justify-content: space-between;
+    background-color: #E7EBDA;
+    border-radius: 10px;
 }
 
 .training-field__for-text {
@@ -68,6 +75,7 @@
 .wrapper-for-start {
     display: flex;
     justify-content: space-between;
+    margin-top: 30px;
 }
 
 .wrapper-for-start>button {
