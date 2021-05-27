@@ -30,7 +30,7 @@ function startTyping() {
     p.childNodes[spanCount].classList.add('green');
 
     document.addEventListener('keydown', (ev) => {
-        if (ev.key !== 'Shift') {
+        if (ev.key.length === 1) {
             if (p.childNodes[spanCount].textContent === ev.key) {
                 p.childNodes[spanCount].classList = '';
                 spanCount++;
@@ -66,5 +66,7 @@ let startButton = document.querySelector('.start');
 
 
 startButton.addEventListener('click', () => {
+    startButton.blur();
+    startButton.disabled = true;
     startTyping()
 })
