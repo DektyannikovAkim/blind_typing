@@ -1,12 +1,14 @@
 'use strict'
 
-const URL = 'https://baconipsum.com/api/?type=meat-and-filler';
-let sec = 0;
-let trueCount = 0;
-let interval = setInterval(calcSpeed, 1000);
+const URL = 'https://baconipsum.com/api/?type=all-meat&paras=';
+const textBox = document.querySelector('.training-field__for-text');
+let numOfPar = document.querySelector('.num_of_par');
+const startButton = document.querySelector('.start');
+const restartButton = document.querySelector('.restart');
+restartButton.disabled = true;
 
-function get_text() {
-    return fetch(`${URL}`)
+function get_text(numOfPar) {
+    return fetch(`${URL}${numOfPar}`)
         .then(result => result.json()).catch(error => {
             console.log(error);
             return [];
@@ -14,40 +16,77 @@ function get_text() {
 }
 
 function render_text(numOfPar) {
-    get_text().then(res => {
+    get_text(numOfPar).then(res => {
         for (let i = 0; i < numOfPar; i++) {
             let p = document.createElement('p');
-            for (let x = 0; x < res[i].length; x++) {
-                p.insertAdjacentHTML('beforeend', `<span class="letter">${res[i][x]}</span>`)
+            // for (let x = 0; x < res[i].length; x++) {
+            //     p.insertAdjacentHTML('beforeend', `<span>${res[i][x]}</span>`)
+            // }
+            for (let x = 0; x < 10; x++) {
+                p.insertAdjacentHTML('beforeend', `<span>${res[i][x]}</span>`)
             }
-            textCont.append(p);
+            textBox.append(p);
         }
     })
 }
 
 function startTyping() {
-    let spanCount = 0;
-    let clickCount = 0;
-    let p = document.querySelector('p');
-    p.childNodes[spanCount].classList.add('green');
+    let spanIndx = 0;
+    let paragIndx = 0;
+    let kdwnCount = 0;
+    let trueCount = 0;
+    let falseCount = 0;
+    let startTime = Date.now();
+    textBox.children[paragIndx].children[spanIndx].classList.add('green');
 
-    document.addEventListener('keydown', (ev) => {
-        if (spanCount < p.childNodes.length) {
-            if (ev.key.length === 1) {
-                if (p.childNodes[spanCount].textContent === ev.key) {
-                    p.childNodes[spanCount].classList = '';
-                    spanCount++;
-                    p.childNodes[spanCount].classList.add('green');
-                    calcAccuracy(++trueCount, ++clickCount);
+    const handler = (ev) => {
+        if (ev.key.length === 1) {
+            kdwnCount++;
+            let targetSpan = textBox.children[paragIndx].children[spanIndx];
+            targetSpan.classList.remove(...targetSpan.classList);
+            if (targetSpan.textContent === ev.key) {
+                let nextTarget;
+                targetSpan.className = 'executed';
+                trueCount++;
+                if (targetSpan.nextSibling) {
+                    spanIndx++;
+                    nextTarget = targetSpan.nextSibling;
+                } else if (textBox.children[paragIndx].nextSibling) {
+                    paragIndx++;
+                    spanIndx = 0;
+                    nextTarget = textBox.children[paragIndx].children[spanIndx];
                 } else {
-                    p.childNodes[spanCount].classList.add('red');
-                    calcAccuracy(trueCount, ++clickCount);
+                    finish(startTime, falseCount, trueCount);
+                    return;
                 }
+                nextTarget.className = 'green';
+            } else {
+                targetSpan.className = 'red';
+                falseCount++;
             }
-        } else {
-            // реализовать здесь окончание печати, вывод модального окна с количеством ошибок, скоростью, точностью...
+            calcAccuracy(trueCount, kdwnCount);
+            calcSpeed(trueCount, (Date.now() - startTime) / 1000)
         }
+    }
+    document.addEventListener('keydown', handler);
+    return () => {
+        document.removeEventListener('keydown', handler);
+    }
+}
+
+function finish(startTime, falseCount, trueCount) {
+    let cart = document.querySelector('#modal');
+    let modalclose = document.querySelector('.close-finished-result');
+    cart.style.display = "block";
+    modalclose.addEventListener('click', () => {
+        cart.style.display = "none";
     })
+    document.querySelector('.time').textContent = ((Date.now() - startTime) / (1000 * 60)).toFixed(2);
+    document.querySelector('.mistakes').textContent = falseCount;
+    document.querySelector('.accuracy-final').textContent = document.querySelector('span[data-id="accuracy-info"]').textContent;
+    document.querySelector('.average-speed').textContent = calcSpeed(trueCount, (Date.now() - startTime) / 1000);
+    unsubscribeCurrentTyping();
+    resetValues();
 }
 
 function calcAccuracy(trueCount, clickCount) {
@@ -55,14 +94,17 @@ function calcAccuracy(trueCount, clickCount) {
     accuracyInf.textContent = Math.round((trueCount / clickCount) * 100);
 }
 
-function calcSpeed() {
-    sec++;
+function calcSpeed(trueCount, time) {
     let speedInfo = document.querySelector('span[data-id="speedo-info"]');
-    speedInfo.textContent = Math.round((trueCount / sec) * 60);
+    let averageSpeed = [];
+    let speed = Math.round((trueCount / time) * 60);
+    averageSpeed.push(speed);
+    speedInfo.textContent = speed;
+    return averageSpeed.reduce((sum, a) => sum + a, 0) / averageSpeed.length;
 }
 
 function resetValues() {
-    textCont.textContent = '';
+    textBox.textContent = '';
     document.querySelector('span[data-id="accuracy-info"]').textContent = '0';
     document.querySelector('span[data-id="speedo-info"]').textContent = '0';
     if (document.querySelector('.green')) {
@@ -70,12 +112,8 @@ function resetValues() {
     } else if (document.querySelector('.red')) {
         document.querySelector('.red').classList = '';
     }
-    clearInterval(interval);
+    startButton.disabled = false;
 }
-
-let textCont = document.querySelector('.training-field__for-text');
-
-let numOfPar = document.querySelector('.num_of_par');
 
 render_text(+numOfPar.value);
 
@@ -85,16 +123,15 @@ numOfPar.addEventListener('change', () => {
     render_text(+numOfPar.value);
 })
 
-let startButton = document.querySelector('.start');
-let restartButton = document.querySelector('.restart');
-restartButton.disabled = true;
 
+
+let unsubscribeCurrentTyping
 startButton.addEventListener('click', () => {
     startButton.blur();
     startButton.disabled = true;
     restartButton.disabled = false;
-    startTyping()
-    interval();
+    if (unsubscribeCurrentTyping) unsubscribeCurrentTyping()
+    unsubscribeCurrentTyping = startTyping()
 })
 
 restartButton.addEventListener('click', () => {

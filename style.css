@@ -9,6 +9,41 @@
     margin: auto;
 }
 
+.finished-result {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    overflow: auto;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(205, 214, 219, 0.3);
+}
+
+.result-info {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid black;
+    width: 80%;
+    border-radius: 25px;
+    background: rgb(235, 235, 235);
+}
+
+.close-finished-result {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    background: no-repeat url('img/close-circle-outline.svg');
+    cursor: pointer;
+    border: none;
+}
+
 .header-border {
     border-bottom: solid 1px #ececec;
     margin-bottom: 20px;
@@ -29,7 +64,7 @@
     color: #222222;
 }
 
-.wrapper-for-param-text {
+.parag {
     font-size: 22px;
 }
 
@@ -85,6 +120,10 @@
     color: #ffffff;
     border-radius: 14%;
     cursor: pointer;
+}
+
+.executed {
+    color: #07b424;
 }
 
 .green {
