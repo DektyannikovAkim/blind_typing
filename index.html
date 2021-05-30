@@ -11,14 +11,14 @@
 </head>
 
 <body>
-
-    <header class="header-border">
-        <div class="header-medium container">
+    <header>
+        <div class="header-content container">
             <a href="#" class="logo">Blind typing
             </a>
+            <span class="warning-message" hidden>Смените раскладку клавиатуры!</span>
             <div class="parag">
                 <span>Выберите количество абзацев</span>
-                <select class="num_of_par">
+                <select class="num-of-par">
                     <option>1</option>
                     <option>2</option>
                     <option>3</option>
@@ -27,9 +27,7 @@
                 </select>
             </div>
         </div>
-
     </header>
-
     <main class="container">
         <div id="modal" class="finished-result">
             <div class="result-info">
@@ -43,35 +41,33 @@
             </div>
         </div>
         <div class="training-field">
-            <div class="training-field__for-text">
-            </div>
-            <div class="training-field__stat-info">
+            <input id="mobile-input" class="inpt-for-mobile">
+            <div class="text-box"></div>
+            <div class="stat-info">
                 <div class="wrapper-for-info">
-                    <div class="training-field__stat-info__item speedo">
-                        <img class="training-field__stat-info__icon" src="img/speedometer-outline.svg" alt="speedo">
+                    <div class="stat-info-item speedo">
+                        <img class="icon" src="img/speedometer-outline.svg" alt="speedo">
                         <span>Скорость</span>
                     </div>
-                    <div class="training-field__stat-info__item info">
-                        <span data-id="speedo-info">0</span>
+                    <div class="stat-info-item indicator">
+                        <span id="speedo-info">0</span>
                         <span>зн./мин</span>
                     </div>
-                    <div class="training-field__stat-info__item accuracy">
-                        <img class="training-field__stat-info__icon" src="img/free-icon-target-900799.svg" alt="target">
+                    <div class="stat-info-item accuracy">
+                        <img class="icon" src="img/free-icon-target-900799.svg" alt="target">
                         <span>Точность</span>
                     </div>
-                    <div class="training-field__stat-info__item info">
-                        <span data-id="accuracy-info">0</span>
+                    <div class="stat-info-item indicator">
+                        <span id="accuracy-info">0</span>
                         <span>%</span>
                     </div>
                 </div>
-
                 <div class="wrapper-for-start">
                     <button class="start">Start</button>
                     <button class="restart">Reload</button>
                 </div>
             </div>
         </div>
-
     </main>
     <script src="script.js"></script>
 </body>

@@ -1,12 +1,16 @@
 'use strict'
 
 const URL = 'https://baconipsum.com/api/?type=all-meat&paras=';
-const textBox = document.querySelector('.training-field__for-text');
-let numOfPar = document.querySelector('.num_of_par');
+const textBox = document.querySelector('.text-box');
+const numOfPar = document.querySelector('.num-of-par');
 const startButton = document.querySelector('.start');
 const restartButton = document.querySelector('.restart');
-let modalclose = document.querySelector('.close-finished-result');
-let cart = document.querySelector('#modal');
+const modalclose = document.querySelector('.close-finished-result');
+const cart = document.querySelector('#modal');
+const layoutMsg = document.querySelector('.warning-message');
+const speedInfo = document.querySelector('#speedo-info');
+const accuracyInf = document.querySelector('#accuracy-info');
+const regExp = /[а-яё]/i;
 
 function get_text(numOfPar) {
     return fetch(`${URL}${numOfPar}`)
@@ -41,6 +45,7 @@ function startTyping() {
 
     const handler = (ev) => {
         if (ev.key.length === 1) {
+            layoutMsg.hidden = true;
             kdwnCount++;
             let targetSpan = textBox.children[paragIndx].children[spanIndx];
             targetSpan.classList.remove(...targetSpan.classList);
@@ -61,10 +66,13 @@ function startTyping() {
                 }
                 nextTarget.className = 'green';
             } else {
+                if (regExp.test(ev.key)) {
+                    layoutMsg.hidden = false;
+                }
                 targetSpan.className = 'red';
             }
             calcAccuracy(trueCount, kdwnCount);
-            calcSpeed(trueCount, (Date.now() - startTime) / 1000)
+            calcSpeed(trueCount, (Date.now() - startTime) / 1000);
         }
     }
     document.addEventListener('keydown', handler);
@@ -74,19 +82,17 @@ function startTyping() {
 }
 
 function calcAccuracy(trueCount, clickCount) {
-    let accuracyInf = document.querySelector('span[data-id="accuracy-info"]');
     accuracyInf.textContent = Math.round((trueCount / clickCount) * 100);
 }
 
 function calcSpeed(trueCount, time) {
-    let speedInfo = document.querySelector('span[data-id="speedo-info"]');
     speedInfo.textContent = Math.round((trueCount / time) * 60);
 }
 
 function resetValues() {
     textBox.textContent = '';
-    document.querySelector('span[data-id="accuracy-info"]').textContent = '0';
-    document.querySelector('span[data-id="speedo-info"]').textContent = '0';
+    accuracyInf.textContent = '0';
+    speedInfo.textContent = '0';
     if (document.querySelector('.green')) {
         document.querySelector('.green').classList = '';
     } else if (document.querySelector('.red')) {
@@ -99,7 +105,7 @@ function finish(startTime, kdwnCount, trueCount) {
     cart.style.display = "block";
     document.querySelector('.time').textContent = totalTime.toFixed(2);
     document.querySelector('.mistakes').textContent = kdwnCount - trueCount;
-    document.querySelector('.accuracy-final').textContent = document.querySelector('span[data-id="accuracy-info"]').textContent;
+    document.querySelector('.accuracy-final').textContent = accuracyInf.textContent;
     document.querySelector('.average-speed').textContent = Math.round(trueCount / totalTime);
     unsubscribeCurrentTyping();
     resetValues();
@@ -130,6 +136,10 @@ numOfPar.addEventListener('change', () => {
 
 modalclose.addEventListener('click', () => {
     cart.style.display = "none";
+})
+
+textBox.addEventListener('click', () => {
+    document.getElementById('mobile-input').focus()
 })
 
 render_text(+numOfPar.value);
