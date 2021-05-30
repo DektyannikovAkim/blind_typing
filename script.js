@@ -5,7 +5,8 @@ const textBox = document.querySelector('.training-field__for-text');
 let numOfPar = document.querySelector('.num_of_par');
 const startButton = document.querySelector('.start');
 const restartButton = document.querySelector('.restart');
-restartButton.disabled = true;
+let modalclose = document.querySelector('.close-finished-result');
+let cart = document.querySelector('#modal');
 
 function get_text(numOfPar) {
     return fetch(`${URL}${numOfPar}`)
@@ -16,17 +17,17 @@ function get_text(numOfPar) {
 }
 
 function render_text(numOfPar) {
+    startButton.disabled = true;
+    restartButton.disabled = true;
     get_text(numOfPar).then(res => {
         for (let i = 0; i < numOfPar; i++) {
             let p = document.createElement('p');
-            // for (let x = 0; x < res[i].length; x++) {
-            //     p.insertAdjacentHTML('beforeend', `<span>${res[i][x]}</span>`)
-            // }
-            for (let x = 0; x < 10; x++) {
+            for (let x = 0; x < res[i].length; x++) {
                 p.insertAdjacentHTML('beforeend', `<span>${res[i][x]}</span>`)
             }
             textBox.append(p);
         }
+        startButton.disabled = false;
     })
 }
 
@@ -35,7 +36,6 @@ function startTyping() {
     let paragIndx = 0;
     let kdwnCount = 0;
     let trueCount = 0;
-    let falseCount = 0;
     let startTime = Date.now();
     textBox.children[paragIndx].children[spanIndx].classList.add('green');
 
@@ -56,13 +56,12 @@ function startTyping() {
                     spanIndx = 0;
                     nextTarget = textBox.children[paragIndx].children[spanIndx];
                 } else {
-                    finish(startTime, falseCount, trueCount);
+                    finish(startTime, kdwnCount, trueCount);
                     return;
                 }
                 nextTarget.className = 'green';
             } else {
                 targetSpan.className = 'red';
-                falseCount++;
             }
             calcAccuracy(trueCount, kdwnCount);
             calcSpeed(trueCount, (Date.now() - startTime) / 1000)
@@ -74,21 +73,6 @@ function startTyping() {
     }
 }
 
-function finish(startTime, falseCount, trueCount) {
-    let cart = document.querySelector('#modal');
-    let modalclose = document.querySelector('.close-finished-result');
-    cart.style.display = "block";
-    modalclose.addEventListener('click', () => {
-        cart.style.display = "none";
-    })
-    document.querySelector('.time').textContent = ((Date.now() - startTime) / (1000 * 60)).toFixed(2);
-    document.querySelector('.mistakes').textContent = falseCount;
-    document.querySelector('.accuracy-final').textContent = document.querySelector('span[data-id="accuracy-info"]').textContent;
-    document.querySelector('.average-speed').textContent = calcSpeed(trueCount, (Date.now() - startTime) / 1000);
-    unsubscribeCurrentTyping();
-    resetValues();
-}
-
 function calcAccuracy(trueCount, clickCount) {
     let accuracyInf = document.querySelector('span[data-id="accuracy-info"]');
     accuracyInf.textContent = Math.round((trueCount / clickCount) * 100);
@@ -96,11 +80,7 @@ function calcAccuracy(trueCount, clickCount) {
 
 function calcSpeed(trueCount, time) {
     let speedInfo = document.querySelector('span[data-id="speedo-info"]');
-    let averageSpeed = [];
-    let speed = Math.round((trueCount / time) * 60);
-    averageSpeed.push(speed);
-    speedInfo.textContent = speed;
-    return averageSpeed.reduce((sum, a) => sum + a, 0) / averageSpeed.length;
+    speedInfo.textContent = Math.round((trueCount / time) * 60);
 }
 
 function resetValues() {
@@ -112,18 +92,18 @@ function resetValues() {
     } else if (document.querySelector('.red')) {
         document.querySelector('.red').classList = '';
     }
-    startButton.disabled = false;
 }
 
-render_text(+numOfPar.value);
-
-numOfPar.addEventListener('change', () => {
-    startButton.disabled = false;
+function finish(startTime, kdwnCount, trueCount) {
+    let totalTime = (Date.now() - startTime) / (1000 * 60);
+    cart.style.display = "block";
+    document.querySelector('.time').textContent = totalTime.toFixed(2);
+    document.querySelector('.mistakes').textContent = kdwnCount - trueCount;
+    document.querySelector('.accuracy-final').textContent = document.querySelector('span[data-id="accuracy-info"]').textContent;
+    document.querySelector('.average-speed').textContent = Math.round(trueCount / totalTime);
+    unsubscribeCurrentTyping();
     resetValues();
-    render_text(+numOfPar.value);
-})
-
-
+}
 
 let unsubscribeCurrentTyping
 startButton.addEventListener('click', () => {
@@ -141,3 +121,15 @@ restartButton.addEventListener('click', () => {
     resetValues();
     render_text(+numOfPar.value);
 })
+
+numOfPar.addEventListener('change', () => {
+    startButton.disabled = false;
+    resetValues();
+    render_text(+numOfPar.value);
+})
+
+modalclose.addEventListener('click', () => {
+    cart.style.display = "none";
+})
+
+render_text(+numOfPar.value);
