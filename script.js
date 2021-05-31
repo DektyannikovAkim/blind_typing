@@ -103,7 +103,6 @@ function finish(startTime, kdwnCount, trueCount) {
     document.querySelector('.mistakes').textContent = kdwnCount - trueCount;
     document.querySelector('.accuracy-final').textContent = accuracyInf.textContent;
     document.querySelector('.average-speed').textContent = Math.round(trueCount / totalTime);
-    unsubscribeCurrentTyping();
     resetValues();
 }
 
