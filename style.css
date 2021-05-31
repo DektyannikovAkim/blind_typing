@@ -157,6 +157,11 @@ header {
     .header-content {
         flex-direction: column;
     }
+    .parag {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
     .training-field {
         flex-direction: column-reverse;
     }
