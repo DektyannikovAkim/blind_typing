@@ -149,3 +149,28 @@ header {
 .red {
     background-color: #F36747;
 }
+
+@media (max-width: 720px) {
+    .header-content {
+        flex-direction: column;
+    }
+    .training-field {
+        flex-direction: column-reverse;
+    }
+    .stat-info {
+        padding-left: 0px;
+    }
+    .wrapper-for-mobile-display {
+        display: flex;
+    }
+    .stat-info-item:not(:last-child) {
+        margin-bottom: 0px;
+    }
+    .wrapper-for-start {
+        justify-content: normal;
+        margin-bottom: 10px;
+    }
+    .start {
+        margin-right: 10px;
+    }
+}
