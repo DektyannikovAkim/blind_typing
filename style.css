@@ -101,6 +101,10 @@ header {
     justify-content: space-between;
 }
 
+.wrapper-for-info-item {
+    margin-bottom: 25px;
+}
+
 .stat-info-item {
     display: flex;
     align-items: center;
@@ -123,7 +127,6 @@ header {
 .wrapper-for-start {
     display: flex;
     justify-content: space-between;
-    margin-top: 30px;
 }
 
 .wrapper-for-start>button {
@@ -160,7 +163,7 @@ header {
     .stat-info {
         padding-left: 0px;
     }
-    .wrapper-for-mobile-display {
+    .wrapper-for-info-item {
         display: flex;
     }
     .stat-info-item:not(:last-child) {
