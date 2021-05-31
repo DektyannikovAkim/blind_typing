@@ -93,11 +93,7 @@ function resetValues() {
     textBox.textContent = '';
     accuracyInf.textContent = '0';
     speedInfo.textContent = '0';
-    if (document.querySelector('.green')) {
-        document.querySelector('.green').classList = '';
-    } else if (document.querySelector('.red')) {
-        document.querySelector('.red').classList = '';
-    }
+    unsubscribeCurrentTyping();
 }
 
 function finish(startTime, kdwnCount, trueCount) {
